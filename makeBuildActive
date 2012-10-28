@@ -30,9 +30,17 @@ ln -s ${newBuild} $symLinkFile && echo "done."
 
 echo " "
 echo "Cleanup..."
+lastBuildConfig="$ApplicationConfigDir/lastBuild.conf"
 latestBuildConfig="$ApplicationConfigDir/latestBuild.conf"
-[ -d $latestBuildConfig ] && rm $latestBuildConfig
+[ -d $lastBuildConfig ] && rm $lastBuildConfig
+[ -d $latestBuildConfig ] && mv $latestBuildConfig $lastBuildConfig && echo "Updated lastBuildConfig."
 mv $newBuildConfig $latestBuildConfig && echo "Updated latestBuild.conf successfully."
 echo "done."
+echo " "
+echo "CURRENT BUILD: $(cat $latestBuildConfig)"
+echo "LAST BUILD: $(cat $lastBuildConfig)"
+echo " "
+echo "Please run pruneBuilds to eliminate any build older than $(cat $lastBuildConfig)."
+echo "In the case of emergency, run revertLastBuild to restore the previous build."
 exit 0
 
