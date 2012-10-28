@@ -30,7 +30,9 @@ ln -s ${newBuild} $symLinkFile && echo "done."
 
 echo " "
 echo "Cleanup..."
-rm $newBuildConfig && echo "Removed newBuild.conf after successfully making it active."
+latestBuildConfig="$ApplicationConfigDir/latestBuild.conf"
+[ -d $latestBuildConfig ] && rm $latestBuildConfig
+mv $newBuildConfig $latestBuildConfig && echo "Updated latestBuild.conf successfully."
 echo "done."
 exit 0
 
