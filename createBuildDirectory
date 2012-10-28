@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# createBuildDirectory
+# (c) Sam Caldwell.  Public Domain.
+#
+[ -z $ApplicationRoot ] && echo "ApplicationRoot not set" && exit 1
+[ -z $ApplicationConfigDir ] && echo "ApplicationConfigDir not set" && exit 1
+
+newBuild="$(date +%Y.%m.%d.%H%M)"
+
+mkdir -p ${ApplicationRoot}/${newBuild}
+
+echo "$newBuild" > $ApplicationConfigDir/newBuild.conf
+
