@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# getBuildSources
+# (c) 2012 Sam Caldwell.  Public Domain
+# This script pulls down the build to a newBuild DOCROOT.
+#
+
+[ -z $ApplicationRoot ] && echo "ApplicationRoot not set." && exit 1
+[ -z $ApplicationConfigDir ] && echo "ApplicationConfigDir not set." && exit 1
+[ -z $ApplicationRepoURL ] && echo "ApplicationRepoURL not set." && exit 1
+
+echo "Checking for a new build..."
+newBuildConfig="$ApplicationConfigDir/newBuild.conf"
+[ ! -f $newBuildConfig ] && echo "No new build exists" && exit 2
+
+newBuildName="$(cat $newBuildConfig)"
+echo "Checking for build $newBuildName"
+newBuild="$ApplicationRoot/$newBuildName"
+[ -z $newBuild ] && echo "Error!  Malformed newBuild.conf file." && exit 3
+[ ! -d $newBuild ] && echo "Build is configured, but cannot be found. Expected: $newBuild" && exit 9
+echo "newBuild found: $newBuild"
+
+echo " "
+echo "$newBuild will be mapped to $sourceBranch..."
+echo "switching to $newBuild"
+OLD_DIR=$(pwd)
+cd $newBuild
+echo "Initializing git"
+git init
+echo "Connecting and pulling build."
+git remote add --mirror=fetch $newBuildName $ApplicationRepoURL
+echo "done."
+cd $OLD_DIR
