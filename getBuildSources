@@ -28,6 +28,7 @@ cd $newBuild
 echo "Initializing git"
 git init
 echo "Connecting and pulling build."
-git remote add --mirror=fetch $newBuildName $ApplicationRepoURL
+git remote add $newBuildName $ApplicationRepoURL
+git pull $newBuildName master
 echo "done."
 cd $OLD_DIR
