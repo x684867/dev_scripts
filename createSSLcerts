@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# /sbin/dev_scripts/createSSLcerts
+# (c) 2012 Sam Caldwell.  Public Domain.
+#
+# This script will generate a self-signed SSL 
+# certificate for the development process.  Don't
+# be dumb enough to use self-signed certs in a
+# production environment unless you really know
+# what you are doing.
+#
+[ -z "$1" ] && echo "Missing expected input.  Use -h or --help for usage information." && exit 1
+[ "$1" == "-h" ] || [ "$1" == "--help" ] && {
+	echo " "
+	echo "$0 Usage Information:"
+	echo " "
+	echo "   $0 key_name"
+	echo " "
+	echo "   key_set_name is an alphanumeric identifier used to track the"
+	echo "   the key-pair files we will be generating."
+	echo " "
+	exit 0
+}
+echo "Starting $0..."
+echo " "
+KEY_NAME="$(echo $1 | tr -dc a-zA-Z0-9.-/_)"
+[ -z "$KEY_NAME" ] && echo "Unacceptable input.  Use -h or --help for usage information." && exit 1
+
+CSR_DIR=/etc/ssl/csr
+mkdir -p $CSR_DIR
+
+PRIVATE_KEY=/etc/ssl/private/${KEY_NAME}.key
+PUBLIC_KEY=/etc/ssl/certs/${KEY_NAME}.crt
+CSR_FILE=$CSR_DIR/${KEY_NAME}.csr
+
+echo "generating private key"
+openssl genrsa -aes256 -out ${PRIVATE_KEY}.orig 2048
+openssl rsa -in ${PRIVATE_KEY}.orig -out ${PRIVATE_KEY}
+[ ! -f $PRIVATE_KEY ] && echo "Failed to create PRIVATE_KEY" && exit 2
+echo " "
+echo "Generating CSR"
+openssl req -new -key ${PRIVATE_KEY} -out ${CSR_FILE}
+[ ! -f $CSR_FILE ] && echo "Failed to create $CSR_FILE" && exit 3
+echo " "
+echo "Generating Certificate"
+echo " "
+openssl x509 -req -days 3650 -in ${CSR_FILE} -signkey ${PRIVATE_KEY} -out ${PUBLIC_KEY}
+[ ! -f $PUBLIC_KEY ] && echo "Failed to create $PUBLIC_KEY" && exit 4
+echo "-----------------------------------------"
+echo "done.  The following keys were generated."
+echo " "
+echo "PRIVATE_KEY: $PRIVATE_KEY"
+echo "PUBLIC_KEY:  $PUBLIC_KEY"
+echo "CSR_FILE:    $CSR_FILE"
+echo "-----------------------------------------"
+exit 0
