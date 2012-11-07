@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# /sbin/dev_scripts/configureUFW
+# (c) 2012 Sam Caldwell.  iTextFor.com.  All Rights Reserved.
+# This script will configure the UFW firewall service for a web server.
+#
+ufw enable
+ufw logging low
+
+ufw limit in from any to any port 22
+ufw allow in from any to any port 80
+ufw allow in from any to ny port 443
+ufw limit in from any to any port ntp
+ufw limit in from any to any port dns
+ufw limit out from any to any port 80
+ufw limit out from any to any port 443
+ufw limit out from any to any port dns
+ufw limit out from any to any port ntp
+ufw limit out from any to any port 22
+
