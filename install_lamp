@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# /sbin/dev_scripts/install_lamp
+# (c) 2012 Sam Caldwell.  Public Domain
+# This script just installs a LAMP stack
+# using my general project standard.
+#
+apt-get install apache2 php5 mysql-server php5-mysql -y
+
+rm -rf /var/www/*
+mkdir -p /var/www/{default,config}
+mkdir /var/www/config/etc/
+mv /etc/apache2 /var/www/config/etc/
+ln -s /var/www/config/etc/apache2 /etc/apache2
+
+mv /etc/profile* /var/www/config/etc/
+ln -s /var/www/config/etc/profile /etc/profile
+ln -s /var/www/config/etc/profile.d /etc/profile.d
+
+mv /etc/nanorc /var/www/config/etc/
+ln -s /var/www/config/etc/nanorc /etc/nanorc
+
+service apache2 reload
+
+
+
+
+chown www-data: /var/www/default -R
+cat > /var/www/default/index.php << EOF_INDEX
+<h1>It works</h1>
+EOF_INDEX
+
+
+
+
